@@ -1,0 +1,10 @@
+{
+  "JSESSIONID": {
+    "value": "ajax:123456789012345678",
+    "expireDate": "2023-10-21T13:49:34.007Z",
+    "path": "/",
+    "domain": ".www.linkedin.com",
+    "secure": true,
+    "httpOnly": true
+  }
+}
