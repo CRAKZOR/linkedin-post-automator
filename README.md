@@ -25,7 +25,7 @@ Automatically curates and posts daily tech news to LinkedIn. This tool extracts 
     pip install -r requirements.txt
     ```
 
-3. Configure your OpenAI API key in `config.py`.
+3. Configure your OpenAI API key `OPENAI_API_KEY` in OS environment.
 
 ## Usage
 
