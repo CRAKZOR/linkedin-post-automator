@@ -24,18 +24,17 @@ All settings and user-specific information are now housed in `config.json`. This
     ```bash
     pip install -r requirements.txt
     ```
+2. Rename `example_config.json` to `config.json`
+3. Update the `config.json` file with your details and desired settings.
 
-2. Update the `config.json` file with your details and desired settings.
-
-3. Kick off the automation with:
+4. Kick off the automation with:
     ```bash
     python main.py
     ```
    Once launched, the script will independently handle the daily content generation task.
 
-## ⏰ TODO: Internal Scheduling
-
-The tool comes with an embedded Python cron utility, ensuring a self-regulated scheduling mechanism. Once set in motion, it's committed to churning out content every day, selecting a random window between 11am-3pm. External cron configurations are unnecessary.
+## ⏰ Internal Scheduling
+The tool comes with an embedded Python cron utility, ensuring a self-regulated scheduling mechanism. Once set in motion, it's committed to churning out content every other day, selecting a random window between 11am-4pm. External cron configurations are unnecessary.
 
 ## 🤝 Contributing
 
