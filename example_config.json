@@ -1,0 +1,16 @@
+{
+  "bio"              : "I am Alex Smith, a Senior Data Scientist based in San Francisco. With over 10 years of experience in the tech industry, I've witnessed the rise and transformation of various technologies. On LinkedIn, I aim to share insightful updates and perspectives on emerging trends, providing value to my network of professionals and enthusiasts alike. I pride myself on bridging the gap between technical complexities and everyday understanding. Given the subsequent news content, I'd appreciate assistance in crafting a succinct, engaging, and informative post that resonates with my LinkedIn audience.",
+  "gpt_preamble"     : "I'm aiming to craft an engaging LinkedIn post today. My goal is to share a perspective on recent industry news that would be of value to my network. To help you generate a relevant and resonating post, I've'be provided you with a brief about the latest happenings in the industry and also a short bio about myself. I'd like the post to be concise, informative, creative, and representative of my professional persona. Also include emoticons. Given this, please help me construct a LinkedIn post that leverages the information effectively and stands out to my audience. Dont include a header, just the post body.",
+  "gpt_token_limit"  : 150,
+  "scrape_char_limit": 300,
+
+  "open_ai_api_key"  : "get_this_key_from_open_ai",
+  "cookies": {
+    "JSESSIONID"     : "from_browser_logged_in_cookies, ex: ajax:123456789012345678",
+    "li_at"          : "from_browser_logged_in_cookies"
+  },
+  "websites": [
+    "https://www.example1.com/",
+    "https://www.example2.com/"
+  ]
+}

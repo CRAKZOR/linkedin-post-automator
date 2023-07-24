@@ -1,36 +1,46 @@
 # 🤖 LinkedIn Post Automator
 
-This project is designed to scrape the latest news from designated websites and, with the help of the OpenAI GPT model, generates LinkedIn post content. It's tailored for automation, ensuring that once set in motion, it continually crafts content daily without manual input.
+**LinkedIn Post Automator** is a powerful tool that scrapes the latest news from designated websites and utilizes the capabilities of the OpenAI GPT model to craft compelling LinkedIn post content. Designed with automation at its core, this tool ensures that fresh and engaging content is produced daily without the need for manual intervention.
 
-## Project Structure
+## 📁 Project Structure
 
-### Main Components:
-- **main.py**: The core of the project. This script orchestrates the activities, coordinating the scraping, processing with ChatGPT, and content preparation for LinkedIn. When triggered, it will persistently loop and has an internal mechanism to generate content daily, at a randomized time slot between 11am-3pm.
+### 🚀 Main Component:
+- **main.py**: This is the engine room of the project. It seamlessly integrates web scraping, ChatGPT processing, and content crafting for LinkedIn. Once initiated, it operates in a continuous loop, employing an internal mechanism to roll out content daily during a randomly chosen slot between 11am-3pm.
 
-### Context Folder:
-Found within are pivotal text files critical for content tailoring:
-- **bio.txt**: Houses the user's biography, assisting ChatGPT in creating content that resonates with the user's professional backdrop.
-- **gpt_preamble.txt**: The initial interaction for ChatGPT, setting the stage and guiding the model before it delves into the bio and the freshly scraped data.
-- **websites.json**: An array of web addresses. Each address points to a site which the script will explore for the freshest news.
+### 🛠 Configuration:
+All settings and user-specific information are now housed in `config.json`. This file captures:
 
-## How to Run
+- **bio**: Your professional biography.
+- **gpt_preamble**: Initial guidance for the ChatGPT model.
+- **gpt_token_limit**: The token limit for the GPT response.
+- **scrape_char_limit**: Character limit for web scraping.
+- **open_ai_api_key**: Your OpenAI API key.
+- **cookies**: Your LinkedIn cookies for authentication.
+- **websites**: An array of URLs you want to target for scraping news.
 
-1. Install the required Python packages:
+## 🚀 How to Run
+
+1. Install the necessary Python packages:
     ```bash
     pip install -r requirements.txt
     ```
-2. Customize `bio.txt` to echo your profile, and tweak the roster of websites in `websites.json` as desired.
-3. Launch the loop by running `python main.py`. Once up and running, the script will handle the task of daily content genesis on its own.
 
-## Internal Scheduling
+2. Update the `config.json` file with your details and desired settings.
 
-The script is powered by an inbuilt Python-based cron utility. This translates to an automated self-scheduling system where, once the script is set in motion, it commits to crafting content daily, choosing a random time between 11am-3pm. There's no need for an external cron setup.
+3. Kick off the automation with:
+    ```bash
+    python main.py
+    ```
+   Once launched, the script will independently handle the daily content generation task.
 
-## Contributing
+## ⏰ TODO: Internal Scheduling
 
-Open arms for contributions! If you stumble upon areas ripe for enhancement or feel the urge to introduce new features, kindly fork the project and present your pull requests. Ensure that your documentation remains crystal clear and succinct for any modifications you introduce.
+The tool comes with an embedded Python cron utility, ensuring a self-regulated scheduling mechanism. Once set in motion, it's committed to churning out content every day, selecting a random window between 11am-3pm. External cron configurations are unnecessary.
 
-## License
+## 🤝 Contributing
 
-[MIT License](LICENSE.md)
+We welcome and appreciate contributions! If you identify potential improvements or wish to introduce new functionalities, kindly fork the repository and submit your pull requests. Ensure your documentation remains clear and concise for any changes you suggest.
 
+## 📜 License
+
+This project falls under the [MIT License](LICENSE.md).
