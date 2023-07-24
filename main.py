@@ -36,7 +36,12 @@ def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
 
             )
             custom_print(response["usage"])
-            custom_print(response.choices)
+
+            if response.choices[0].finish_reason != "stop":
+                # message was cut off
+                sleep(5)
+                continue
+
             return response.choices[0].message.content.strip()
         except openai.error.RateLimitError:
             custom_print("Rate limit exceeded. Retrying in 60 seconds...")
@@ -119,9 +124,8 @@ def main():
 
     # print(gpt_messages)
     gpt_res = ask_chatgpt(gpt_messages, gpt_token_limit)
-    # custom_print("Post: " + sub( r'\n+', ' ', gpt_res))
+    custom_print("Post: " + sub( r'\n+', ' ', gpt_res))
 
-    return
     payload = {
         "visibleToConnectionsOnly": False,
         "externalAudienceProviders": [],
