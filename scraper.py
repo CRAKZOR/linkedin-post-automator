@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import re
 
 
 class Scraper:
@@ -31,7 +32,7 @@ class Scraper:
         # Split the lines, remove leading and trailing whitespace
         lines = (line.strip() for line in all_text.splitlines())
 
-        # Remove empty lines and join
-        all_text_clean = ' '.join(line for line in lines if line)
+        # Remove empty lines, and multi-space and join
+        all_text_clean = re.sub( r'\s+', ' ', ( ' '.join( line for line in lines if line ) ) )
 
         return all_text_clean[0:self.character_limit]
