@@ -4,6 +4,7 @@ import random
 import requests
 import schedule
 import openai
+from re import sub
 from time import sleep
 
 from scraper import Scraper
@@ -35,9 +36,13 @@ def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
 
             )
             custom_print(response["usage"])
+            custom_print(response.choices)
             return response.choices[0].message.content.strip()
-        except openai.error.RateLimitError as e:
+        except openai.error.RateLimitError:
             custom_print("Rate limit exceeded. Retrying in 60 seconds...")
+            sleep(60)
+        except openai.error.ServiceUnavailableError:
+            custom_print("The server is overloaded or not ready yet.  Retrying in 60 seconds...")
             sleep(60)
 
 
@@ -82,6 +87,7 @@ def get_file_data (fname, protocol="r"):
         else:
             return file.read().strip()
 
+
 def main():
     config      = get_file_data("config.json")
 
@@ -111,9 +117,11 @@ def main():
 
     openai.api_key = api_key
 
+    # print(gpt_messages)
     gpt_res = ask_chatgpt(gpt_messages, gpt_token_limit)
-    custom_print("Post: " + gpt_res)
+    # custom_print("Post: " + sub( r'\n+', ' ', gpt_res))
 
+    return
     payload = {
         "visibleToConnectionsOnly": False,
         "externalAudienceProviders": [],
