@@ -161,7 +161,8 @@ def main_task():
 
 def schedule_next_task():
     minutes_for_next_task = random.randint(30, 90)
-    logging.info(f"Next task scheduled in {minutes_for_next_task} minutes")
+    time_to_execute = datetime.now() + timedelta(minutes=minutes_for_next_task)
+    logging.info(f"Next task scheduled in {minutes_for_next_task} minutes. Time to execute: {time_to_execute}")
     schedule.every(minutes_for_next_task).minutes.do(main_task)
 
 
