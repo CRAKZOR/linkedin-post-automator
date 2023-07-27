@@ -160,10 +160,9 @@ def main_task():
 
 
 def schedule_next_task():
-    minutes_for_next_task = random.randint(1, 60)
+    minutes_for_next_task = random.randint(30, 90)
     logging.info(f"Next task scheduled in {minutes_for_next_task} minutes")
     schedule.every(minutes_for_next_task).minutes.do(main_task)
-    # schedule.every(minutes_for_next_task).seconds.do(main_task)
 
 
 if __name__ == "__main__":
