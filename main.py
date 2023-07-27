@@ -99,16 +99,6 @@ def post_linkedin(payload, cookies):
         logging.error(f"Error posting to LinkedIn: {e}")
 
 
-def get_file_data(fname, protocol="r"):
-    # Load websites from the JSON file
-    with open(fname, protocol) as file:
-        if "json" in str.lower(fname):
-            # is .json
-            return json.load(file)
-        else:
-            return file.read().strip()
-
-
 def main():
     config = configparser.ConfigParser()
     config.read('config.ini')
