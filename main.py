@@ -8,7 +8,7 @@ import openai
 from time import sleep
 import logging
 
-from scraper import Scraper
+from scraper import RssScrap
 
 logging.basicConfig(
     level=logging.INFO,
@@ -20,32 +20,32 @@ logging.basicConfig(
 )
 
 
-def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
+def ask_chatgpt(config, content, token_limit=150):
+    preamble = config["preamble"]
+    bio = config["bio"]
+
+    system_messages = [
+        {"role": "system", "content": preamble},
+        {"role": "system", "content": bio},
+    ]
+
+    user_messages = [
+        {"role": "user", "content": item} for item in content
+    ]
+
+    gpt_messages = system_messages + user_messages
 
     request_wait_time_seconds = 1
     response_text = ''
-    # reason_mapping = {
-    #     "stop": "Reached max_tokens",
-    #     "length": "Response length exceeded max_tokens",
-    #     "function_call": "Function call encountered",
-    #     "content_filter": "Content filter triggered",
-    #     "max_tokens": "Max tokens exceeded",
-    # }
     while True:
         try:
             response = openai.ChatCompletion.create(
-                model=model,
-                messages=messages,
+                model='gpt-3.5-turbo',
+                messages=gpt_messages,
                 max_tokens=token_limit,
                 stop=["xx"],
             )
-
             logging.info(f'Usage: {response["usage"]}')
-
-            # if response.choices[0].finish_reason in reason_mapping.keys():
-            #     reason_name = reason_mapping[response.choices[0].finish_reason]
-            #     raise Exception(f"Reason: {reason_name}")
-
             response_text = response.choices[0].message['content'].strip()
             logging.info(f"Text from GPT: {response_text}")
             return response_text
@@ -71,14 +71,26 @@ def get_session():
     return globals()["linkedin_session"]
 
 
-def post_linkedin(payload, cookies):
+def post_linkedin(payload_text, cookies_conf):
+    payload = {
+        "visibleToConnectionsOnly": False,
+        "externalAudienceProviders": [],
+        "commentaryV2": {
+            "text": payload_text,
+            "attributes": []
+        },
+        "origin": "FEED",
+        "allowedCommentersScope": "ALL",
+        "postState": "PUBLISHED",
+        "media": []
+    }
     session = get_session()
-    cookie_value = "li_at=%s; JSESSIONID=\"%s\"" % (cookies["li_at"], cookies["JSESSIONID"])
+    cookie_value = "li_at=%s; JSESSIONID=\"%s\"" % (cookies_conf["li_at"], cookies_conf["JSESSIONID"])
     headers = {
         "accept": "application/vnd.linkedin.normalized+json+2.1",
         "accept-language": "en-US,en;q=0.9",
         "content-type": "application/json; charset=UTF-8",
-        "csrf-token": cookies["JSESSIONID"],
+        "csrf-token": cookies_conf["JSESSIONID"],
         "referrer-policy": "strict-origin-when-cross-origin, strict-origin-when-cross-origin",
         "origin": "https://www.linkedin.com",
         "Referrer": "https://www.linkedin.com/feed/",
@@ -104,53 +116,23 @@ def main(config_path='config.ini'):
     config.read(config_path)
 
     settings = config['settings']
-    bio = settings['bio']
-    preamble = settings['gpt_preamble']
     gpt_token_limit = int(settings['gpt_token_limit'])
     scrape_char_limit = int(settings['scrape_char_limit'])
     openai.api_key = settings['open_ai_api_key']
 
     cookies_conf = config['cookies']
-    cookies = {
-        'JSESSIONID': cookies_conf['JSESSIONID'],
-        'li_at': cookies_conf['li_at']
-    }
 
     urls = config['websites']['websites'].split()
 
     content = []
     for url in urls:
-        data = Scraper(url, scrape_char_limit).fetch_content()
+        data = RssScrap(url, scrape_char_limit).fetch_content()
         if data:
             content.append(data)
     random.shuffle(content)
 
-    system_messages = [
-        {"role": "system", "content": preamble},
-        {"role": "system", "content": bio},
-    ]
-
-    user_messages = [
-        {"role": "user", "content": item} for item in content
-    ]
-
-    gpt_messages = system_messages + user_messages
-    gpt_res = ask_chatgpt(gpt_messages, gpt_token_limit)
-
-    payload = {
-        "visibleToConnectionsOnly": False,
-        "externalAudienceProviders": [],
-        "commentaryV2": {
-            "text": gpt_res,
-            "attributes": []
-        },
-        "origin": "FEED",
-        "allowedCommentersScope": "ALL",
-        "postState": "PUBLISHED",
-        "media": []
-    }
-
-    post_linkedin(json.dumps(payload), cookies )
+    gpt_res = ask_chatgpt(settings, content, token_limit=gpt_token_limit)
+    post_linkedin(gpt_res, cookies_conf)
 
 
 def main_task(**kwargs):
@@ -168,6 +150,8 @@ def schedule_next_task(**kwargs):
 
 if __name__ == "__main__":
     import sys
+
+    main()
 
     config_file_path = None
     if len(sys.argv) > 1:
