@@ -99,9 +99,9 @@ def post_linkedin(payload, cookies):
         logging.error(f"Error posting to LinkedIn: {e}")
 
 
-def main():
+def main(config_path='config.ini'):
     config = configparser.ConfigParser()
-    config.read('config.ini')
+    config.read(config_path)
 
     settings = config['settings']
     bio = settings['bio']
@@ -153,21 +153,28 @@ def main():
     post_linkedin(json.dumps(payload), cookies )
 
 
-def main_task():
-    main()
+def main_task(**kwargs):
+    main(**kwargs)
     schedule_next_task()
     logging.info("Task completed")
 
 
-def schedule_next_task():
+def schedule_next_task(**kwargs):
     minutes_for_next_task = random.randint(30, 90)
     time_to_execute = datetime.now() + timedelta(minutes=minutes_for_next_task)
     logging.info(f"Next task scheduled in {minutes_for_next_task} minutes. Time to execute: {time_to_execute}")
-    schedule.every(minutes_for_next_task).minutes.do(main_task)
+    schedule.every(minutes_for_next_task).minutes.do(main_task, **kwargs)
 
 
 if __name__ == "__main__":
-    schedule_next_task()
+    import sys
+
+    config_file_path = None
+    if len(sys.argv) > 1:
+        config_file_path = sys.argv[1]
+        schedule_next_task(config_path=config_file_path)
+    else:
+        schedule_next_task()
 
     while True:
         schedule.run_pending()
