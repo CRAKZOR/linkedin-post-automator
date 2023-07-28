@@ -59,7 +59,7 @@ def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
         finally:
             with open("out.log", "a") as f:
                 f.write(f"{datetime.now()}: {response_text}\n")
-            request_wait_time_seconds **= 2
+            request_wait_time_seconds *= 2
             logging.info(f"Request wait time: {request_wait_time_seconds}")
             sleep(request_wait_time_seconds)
 
