@@ -1,45 +1,46 @@
 # 🤖 LinkedIn Post Automator
 
-**LinkedIn Post Automator** is a powerful tool that scrapes the latest news from designated websites and utilizes the capabilities of the OpenAI GPT model to craft compelling LinkedIn post content. Designed with automation at its core, this tool ensures that fresh and engaging content is produced daily without the need for manual intervention.
+**LinkedIn Post Automator** is a versatile tool designed to either scrape the latest news from designated websites or generate content directly through OpenAI's GPT, crafting compelling LinkedIn post content. This tool ensures fresh and captivating content is produced at regular intervals without the need for manual intervention.
 
 ## 📁 Project Structure
 
 ### 🚀 Main Component:
-- **main.py**: This is the engine room of the project. It seamlessly integrates web scraping, ChatGPT processing, and content crafting for LinkedIn. Once initiated, it operates in a continuous loop, employing an internal mechanism to roll out content daily during a randomly chosen slot between 11am-3pm.
+- **main.py**: This file serves as the crux of the project. It provides a seamless integration between web scraping, ChatGPT processing, and LinkedIn content generation. Once initiated, it operates in a perpetual loop, relying on an internal scheduler to roll out content based on the user-defined interval.
 
 ### 🛠 Configuration:
-All settings and user-specific information are now housed in `config.json`. This file captures:
+User-specific settings are housed in the `config.json` file:
 
 - **bio**: Your professional biography.
-- **gpt_preamble**: Initial guidance for the ChatGPT model.
-- **gpt_token_limit**: The token limit for the GPT response.
-- **scrape_char_limit**: Character limit for web scraping.
+- **gpt_preamble**: Initial instructions for the ChatGPT model.
+- **gpt_token_limit**: The response token limit for GPT.
 - **open_ai_api_key**: Your OpenAI API key.
-- **cookies**: Your LinkedIn cookies for authentication.
-- **websites**: An array of URLs you want to target for scraping news.
+- **cookies**: LinkedIn cookies for authentication.
+- **hour_interval**: Interval (in hours) between each post.
+- **random_hour_offset**: Max random hour offset added to the interval.
+- **random_min_offset**: Max random minute offset added to the interval.
+- **scrape_char_limit**: Maximum character limit for web scraping (relevant if "websites" are provided).
+- **websites**: An optional array of URLs for news scraping. If not provided, the tool will lean on ChatGPT, for example, to generate daily jokes or insights based on the preamble.
 
 ## 🚀 How to Run
 
-1. Install the necessary Python packages:
+1. Install the required Python packages:
     ```bash
     pip install -r requirements.txt
     ```
-2. Rename `example_config.json` to `config.json`
-3. Update the `config.json` file with your details and desired settings.
-
-4. Kick off the automation with:
+2. Rename `example_config.json` to `config.json`.
+3. Populate the `config.json` file with your details and preferences.
+4. Start the automation with:
     ```bash
     python main.py
     ```
-   Once launched, the script will independently handle the daily content generation task.
 
 ## ⏰ Internal Scheduling
-The tool comes with an embedded Python cron utility, ensuring a self-regulated scheduling mechanism. Once set in motion, it's committed to churning out content every other day, selecting a random window between 11am-4pm. External cron configurations are unnecessary.
+Equipped with an internal Python scheduler, the tool ensures automated content generation at user-defined intervals, enhanced by random offsets for variability. No external cron configurations are required.
 
 ## 🤝 Contributing
 
-We welcome and appreciate contributions! If you identify potential improvements or wish to introduce new functionalities, kindly fork the repository and submit your pull requests. Ensure your documentation remains clear and concise for any changes you suggest.
+Contributions are highly appreciated! If you see potential improvements or wish to introduce new functionalities, please fork the repository and submit your pull requests. Keep your documentation clear and concise.
 
 ## 📜 License
 
-This project falls under the [MIT License](LICENSE.md).
+This project is under the [MIT License](LICENSE.md).

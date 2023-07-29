@@ -1,14 +1,19 @@
 {
-  "bio"              : "I am Alex Smith, a Senior Data Scientist based in San Francisco. With over 10 years of experience in the tech industry, I've witnessed the rise and transformation of various technologies. On LinkedIn, I aim to share insightful updates and perspectives on emerging trends, providing value to my network of professionals and enthusiasts alike. I pride myself on bridging the gap between technical complexities and everyday understanding. Given the subsequent news content, I'd appreciate assistance in crafting a succinct, engaging, and informative post that resonates with my LinkedIn audience.",
-  "gpt_preamble"     : "Craft an engaging LinkedIn post. My goal is to share a short perspective on recent industry news that would be of value to my network. To help you generate a relevant and resonating post, I provided a short bio about myself. Analyze the scraped text from latest happenings in the industry. I'd like the post to be concise, informative, creative, and representative of my professional persona. Include emoticons and do not include source. Given this, please help me construct a LinkedIn post that leverages the information effectively and stands out to my audience. Focus on only one piece of news.",
-  "gpt_token_limit"  : 250,
-  "scrape_char_limit": 800,
+  "bio"                : "I am Alex Smith, a Senior Data Scientist based in San Francisco. With over 10 years of experience in the tech industry, I've witnessed the rise and transformation of various technologies. On LinkedIn, I aim to share insightful updates and perspectives on emerging trends, providing value to my network of professionals and enthusiasts alike. I pride myself on bridging the gap between technical complexities and everyday understanding. Given the subsequent news content, I'd appreciate assistance in crafting a succinct, engaging, and informative post that resonates with my LinkedIn audience.",
+  "gpt_preamble"       : "Craft an engaging LinkedIn post. My goal is to share a short perspective on recent industry news that would be of value to my network. To help you generate a relevant and resonating post, I provided a short bio about myself. Analyze the scraped text from latest happenings in the industry. I'd like the post to be concise, informative, creative, and representative of my professional persona. Include emoticons and do not include source. Given this, please help me construct a LinkedIn post that leverages the information effectively and stands out to my audience. Focus on only one piece of news.",
+  "gpt_token_limit"    : 250,
+  "open_ai_api_key"    : "get_this_key_from_open_ai",
 
-  "open_ai_api_key"  : "get_this_key_from_open_ai",
   "cookies": {
-    "JSESSIONID"     : "from_browser_logged_in_cookies, ex: ajax:123456789012345678",
-    "li_at"          : "from_browser_logged_in_cookies"
+    "JSESSIONID"       : "from_browser_logged_in_cookies, ex: ajax:123456789012345678",
+    "li_at"            : "from_browser_logged_in_cookies"
   },
+
+  "hour_interval"      : 24,
+  "random_hour_offset" : 3,
+  "random_min_offset"  : 25,
+
+  "scrape_char_limit"  : 800,
   "websites": [
     "https://www.example1.com/",
     "https://www.example2.com/"

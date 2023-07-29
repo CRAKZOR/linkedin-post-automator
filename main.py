@@ -15,24 +15,30 @@ def custom_print(message):
     print(f"[{current_time}] {message}")
 
 
-def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
+def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo", temp=1, retry_count=5):
     """
-        see https://platform.openai.com/docs/models/gpt-4 for available engines
-        :param messages:
-        :param token_limit: limit the response length
-        :param model:       gpt model/engine
-        :return:
+    Queries the GPT model for a response based on input messages.
 
-        messages must be in format ex: [ {"role": "user", "content": "I am Peter"} ... ]
+    :param messages     : Input messages formatted as a list of dictionaries.
+                            Example: [{"role": "user", "content": "I am Peter"}]
+    :param token_limit  : Maximum length of the GPT response.
+    :param model        : Name of the GPT model/engine to be used.
+    :param retry_delay  : Duration (in seconds) to wait before retrying after an error.
+    :param temp         : Specifies the randomness of the model's output. Higher values (close to 1) make
+                            the output more random, while lower values make it more deterministic.
+
+    :return: GPT response as a string.
     """
 
-    while True:
+    while retry_count >= 0:
+        retry_count -= 1
+
         try:
             response = openai.ChatCompletion.create(
                 model       = model,
                 messages    = messages,
-                max_tokens=token_limit
-                # temperature = 0,
+                max_tokens  = token_limit,
+                temperature = temp
 
             )
             custom_print(response["usage"])
@@ -49,6 +55,9 @@ def ask_chatgpt(messages, token_limit=150, model="gpt-3.5-turbo"):
         except openai.error.ServiceUnavailableError:
             custom_print("The server is overloaded or not ready yet.  Retrying in 60 seconds...")
             sleep(60)
+
+    return None
+
 
 
 def post_linkedin(payload, cookies ):
@@ -124,7 +133,10 @@ def main():
 
     # print(gpt_messages)
     gpt_res = ask_chatgpt(gpt_messages, gpt_token_limit)
-    custom_print("Post: " + sub( r'\n+', ' ', gpt_res))
+    if not gpt_res:
+        return custom_print("Error: gpt response empty")
+
+    custom_print("Post: " + sub(r'\n+', ' ', gpt_res))
 
     payload = {
         "visibleToConnectionsOnly": False,
@@ -144,24 +156,28 @@ def main():
 
 def main_task():
     main()
+
     # After the main task is done, schedule the next task
     schedule_next_task()
 
 
 def schedule_next_task():
-    random_hour     = random.randint(11, 16)           # Random hour between 11am and 4pm inclusive
-    random_minute   = random.randint(0, 59)            # Random minute
+    config              = get_file_data("config.json")
 
-    # Compute the next date when the task will run
-    next_run_date = datetime.now() + timedelta(days=2)
-    formatted_next_run_date = next_run_date.strftime('%m/%d/%Y')
+    hour_interval       = int(config["hour_interval"])          or 0
+    rand_hour_offset    = int(config["random_hour_offset"])     or 0
+    rand_min_offset     = int(config["random_min_offset"])      or 0
 
-    custom_print(f"Scheduled to run on {formatted_next_run_date} at {random_hour}:{random_minute}")
+    # Calculate the total interval in minutes, including the random offsets
+    total_minutes_interval = (hour_interval * 60) + random.randint(0, rand_hour_offset * 60) + random.randint(0,
+                                                                                                              rand_min_offset)
+    # Compute the exact datetime for the next task
+    next_run_time = datetime.now() + timedelta(minutes=total_minutes_interval)
+    formatted_next_run_time = next_run_time.strftime('%Y-%m-%d %H:%M:%S')
 
-    # Clear all jobs before scheduling a new one
-    schedule.clear()
+    custom_print(f"Scheduled to run on {formatted_next_run_time}")
 
-    schedule.every(2).days.at(f"{random_hour:02d}:{random_minute:02d}").do(main_task)
+    schedule.every(total_minutes_interval).minutes.do(main_task)
 
 
 if __name__ == "__main__":
