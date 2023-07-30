@@ -13,8 +13,20 @@ User-specific settings are housed in the `config.json` file:
 - **bio**: Your professional biography.
 - **gpt_preamble**: Initial instructions for the ChatGPT model.
 - **gpt_token_limit**: The response token limit for GPT.
-- **open_ai_api_key**: Your OpenAI API key.
+- **open_ai_api_key**: Your personal API key to access OpenAI's services.
+  - To obtain this:
+    - Visit [OpenAI's Platform](https://platform.openai.com/signup).
+    - Sign up for an account.
+    - Once you are registered and logged in, navigate to the API section to get your API key.
+
 - **cookies**: LinkedIn cookies for authentication.
+  - To get your logged-in cookies from the browser:
+    - Login to LinkedIn.
+    - Right-click on the page and select "Inspect" (or Ctrl+Shift+I).
+    - Navigate to the "Application" tab.
+    - In the left sidebar, find and expand the "Cookies" section.
+    - Copy the relevant cookie values.
+
 - **hour_interval**: Interval (in hours) between each post.
 - **random_hour_offset**: Max random hour offset added to the interval.
 - **random_min_offset**: Max random minute offset added to the interval.
