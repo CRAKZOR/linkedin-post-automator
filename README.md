@@ -1,11 +1,11 @@
 # 🤖 LinkedIn Post Automator
 
-**LinkedIn Post Automator** is a versatile tool designed to either scrape the latest news from designated websites or generate content directly through OpenAI's GPT, crafting compelling LinkedIn post content. This tool ensures fresh and captivating content is produced at regular intervals without the need for manual intervention.
+**LinkedIn Post Automator** is a versatile tool designed to generate content using OpenAI's GPT. It crafts compelling LinkedIn post content in response to user prompts and can optionally incorporate scraped data from designated websites. This tool ensures that fresh and captivating content is produced regularly without manual intervention.
 
 ## 📁 Project Structure
 
 ### 🚀 Main Component:
-- **main.py**: This file serves as the crux of the project. It provides a seamless integration between web scraping, ChatGPT processing, and LinkedIn content generation. Once initiated, it operates in a perpetual loop, relying on an internal scheduler to roll out content based on the user-defined interval.
+- **main.py**: This file is the central hub of the project. It seamlessly integrates web scraping, ChatGPT processing, and LinkedIn content generation. Once initiated, it operates in a continuous loop, relying on an internal scheduler to roll out content at user-defined intervals.
 
 ### 🛠 Configuration:
 User-specific settings are housed in the `config.json` file:

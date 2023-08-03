@@ -43,21 +43,25 @@ class ChatGpt:
 
                 # Check if response is incomplete
                 if response.choices[0].finish_reason != "stop":
+                    continue
+
+                    # TODO: fix continuation
 
                     # message was cut off
-                    if continuation_limit:
+                    # if continuation_limit:
+                    #
+                    #     # Modify the messages list to append the incomplete response and continue
+                    #     messages.append({"role": "user", "content": response.choices[0].message.content.strip()})
+                    #     messages.append({"role": "user", "content": "The previous message was cut off."})
+                    #
+                    #     continuation_limit -= 1
+                    #     custom_print(f"{continuation_limit} continuations left")
+                    #     print(response.choices[0].message.content.strip())
+                    #     continue
+                    #
+                    # else:
+                    #     raise IncompleteResponse()
 
-                        # Modify the messages list to append the incomplete response and continue
-                        messages.append({"role": "user", "content": response.choices[0].message.content.strip()})
-                        messages.append({"role": "user", "content": "The previous message was cut off."})
-
-                        continuation_limit -= 1
-                        custom_print(f"{continuation_limit} continuations left")
-                        print(response.choices[0].message.content.strip())
-                        continue
-
-                    else:
-                        raise IncompleteResponse()
                 else:
 
                     tokens_used = "\n    ".join([

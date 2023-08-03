@@ -50,7 +50,8 @@ class ContentManager:
 
         if not gpt_res:
             return None
-        return sub(r'\n+', ' ', gpt_res)
+
+        return gpt_res
 
     def post_content(self):
 
@@ -61,7 +62,7 @@ class ContentManager:
             custom_print("Error: gpt response empty")
             return
 
-        custom_print("Post: " + gpt_response)
+        custom_print("Post: " + sub(r'\n+', ' ', gpt_response))
 
         linkedin        = LinkedIn(self.cookies)
 
