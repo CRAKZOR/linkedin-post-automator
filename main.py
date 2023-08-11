@@ -20,6 +20,9 @@ def main_task():
 
 
 def schedule_next_task():
+    # clear previous schedule
+    schedule.clear()
+
     # Initialize the static variable on the first function call
     if not hasattr(schedule_next_task, "prev_offset_minutes"):
         setattr(schedule_next_task, "prev_offset_minutes", 0)
