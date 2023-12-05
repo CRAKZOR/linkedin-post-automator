@@ -2,8 +2,7 @@ import requests
 import json
 from os import path
 from utils import custom_print, get_content_type, get_file_data, MEDIA_CATEGORY
-
-
+from re import sub
 class ContentTooLong(requests.RequestException):
     """ LinkedIn post limit reached """
     pass
@@ -19,16 +18,19 @@ class LinkedIn:
 
     def __init__(self, cookies):
         self.cookies = cookies
+        if '\"' in cookies["JSESSIONID"]:
+            self.cookies["JSESSIONID"] = sub( r'\"+', '', cookies["JSESSIONID"] )
+
         self.headers = {
-            "User-Agent"        : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
             "accept"            : "application/vnd.linkedin.normalized+json+2.1",
             "accept-language"   : "en-US,en;q=0.9",
             "content-type"      : "application/json; charset=UTF-8",
-            "csrf-token"        : cookies["JSESSIONID"],
-            "referrer-policy"   : "strict-origin-when-cross-origin, strict-origin-when-cross-origin",
+            "csrf-token"        : self.cookies["JSESSIONID"],
             "origin"            : self.BASE_URL,
-            "referrer"          : self.BASE_URL + "/feed/",
-            "cookie"            : "li_at=%s; JSESSIONID=\"%s\"" % (cookies["li_at"], cookies["JSESSIONID"])
+            "cookie"            : '; '.join([f'{key}="{value}"' if key == "JSESSIONID" else f'{key}={value}' for key, value in self.cookies.items()]),
+            "Referer"           : self.BASE_URL + "/feed/",
+            "Referrer-Policy"   : "strict-origin-when-cross-origin, strict-origin-when-cross-origin",
+            "User-Agent"        : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             # ... other headers ...
         }
 
@@ -55,7 +57,8 @@ class LinkedIn:
             if len(text) > self.POST_CHAR_LIMIT:
                 raise ContentTooLong()
 
-            response = requests.post(self.POST_ENDPOINT, headers=self.headers, data=json.dumps(payload))
+            response = requests.post(self.POST_ENDPOINT, headers=self.headers, json=payload)
+
             response.raise_for_status()
             # Handle response
 
