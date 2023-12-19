@@ -3,6 +3,7 @@ import json
 from os import path
 from utils import custom_print, get_content_type, get_file_data, MEDIA_CATEGORY
 from re import sub
+
 class ContentTooLong(requests.RequestException):
     """ LinkedIn post limit reached """
     pass
@@ -16,8 +17,10 @@ class LinkedIn:
     POST_ENDPOINT       = BASE_URL + "/voyager/api/contentcreation/normShares"
     UPLOAD_ENDPOINT     = BASE_URL + "/voyager/api/voyagerVideoDashMediaUploadMetadata?action=upload"
 
-    def __init__(self, cookies):
-        self.cookies = cookies
+    def __init__(self, cookies, config_fname='../config.json'):
+        self.config_fname = config_fname
+        self.cookies     = { key: value.strip() if isinstance(value, str) else value for key, value in cookies.items() }
+
         if '\"' in cookies["JSESSIONID"]:
             self.cookies["JSESSIONID"] = sub( r'\"+', '', cookies["JSESSIONID"] )
 
@@ -33,6 +36,65 @@ class LinkedIn:
             "User-Agent"        : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             # ... other headers ...
         }
+
+    def update_cookies(self):
+        # Update the cookies in the headers
+        self.headers["cookie"] = '; '.join(
+            [f'{key}="{value}"' if key == "JSESSIONID" else f'{key}={value}' for key, value in self.cookies.items()])
+
+        # Update the cookies in the config file
+        dir_path    = path.dirname(path.realpath(__file__))   # Gets the directory where the script is located
+        config_path = path.join(dir_path, self.config_fname)  # Constructs the path to the config file
+        try:
+            with open(config_path, 'r') as file:
+                config = json.load(file)
+
+            config['cookies'] = self.cookies
+
+            with open(config_path, 'w') as file:
+                json.dump(config, file, indent=4)
+
+            print("Cookies updated in config file.")
+
+        except (FileNotFoundError, IOError) as e:
+            print(f"Error updating config file: {e}")
+
+    def check_session(self, resp_headers=None ):
+        try:
+            if not resp_headers:
+                response = requests.get(self.BASE_URL, headers=self.headers)
+                response.raise_for_status()
+
+                resp_headers = response.headers
+
+            if "Set-Cookie" in resp_headers and "li_at=" in resp_headers['Set-Cookie']:
+
+                cookie_parts  = resp_headers['Set-Cookie'].split(';')
+                has_updates   = False
+
+                for cookie_key in [
+                    "JSESSIONID",
+                    "li_at"
+                ]:
+                    if f"{cookie_key}=" in resp_headers['Set-Cookie']:
+                        # Extracting the cookie value
+                        found_cookie = next( ( part for part in cookie_parts if f"{cookie_key}=" in part ), None)
+
+                        if found_cookie:
+
+                            # Extract the value
+                            new_cookie_value = found_cookie.split(f"{cookie_key}=")[1].split(';')[0].strip().replace('\"', '')
+
+                            if new_cookie_value and self.cookies[cookie_key] != new_cookie_value:
+                                # Update the configuration with the new cookie
+                                self.cookies[cookie_key] = new_cookie_value
+                                has_updates = True
+
+                if has_updates:
+                    self.update_cookies()
+
+        except requests.exceptions.RequestException as e:
+            custom_print(f"Error checking LinkedIn session: {e}")
 
     def post(self, text, media=None):
 
@@ -61,6 +123,8 @@ class LinkedIn:
 
             response.raise_for_status()
             # Handle response
+
+            self.check_session(response.headers)
 
         except ContentTooLong:
             custom_print(f"Error posting to LinkedIn: post character limit reached")
@@ -93,6 +157,8 @@ class LinkedIn:
         try:
             response = requests.post(self.UPLOAD_ENDPOINT, headers=self.headers, data=json.dumps(payload))
             response.raise_for_status()
+
+            self.check_session(response.headers)
 
             data                              = response.json()["data"]["value"]
             upload_endpoint                   = data["singleUploadUrl"]
