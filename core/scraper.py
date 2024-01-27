@@ -9,10 +9,12 @@ class Scraper:
         self.character_limit = character_limit
 
     def fetch_content(self):
-        response = requests.get(self.url)
-        if response.status_code == 200:
+        try:
+            response = requests.get(self.url)
+            response.raise_for_status()
             return self.parse(response.text)
-        return None
+        except Exception as e:
+            return None
 
     def parse(self, content):
         soup = BeautifulSoup(content, 'html.parser')
