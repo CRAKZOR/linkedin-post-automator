@@ -25,9 +25,9 @@ class ContentManager:
         self.bio                = self.config.get("bio")
         self.gpt_token_limit    = self.config.get("gpt_token_limit")
         self.scrape_char_limit  = self.config.get("scrape_char_limit")
+        self.num_recent_posts   = self.config.get("num_recent_posts")
 
     def fetch_website_content(self):
-        # TODO: look into using chatgpt to format scraped data.
         content = []
         for url in self.urls:
             data = Scraper(url, self.scrape_char_limit).fetch_content()
@@ -37,14 +37,23 @@ class ContentManager:
 
         return content
 
-    def process_gpt_response(self, content):
+    def process_gpt_response(self, scraped_content=None, recent_posts=None):
         # Combine preamble, bio, and website content into the correctly formatted messages
         gpt_messages = [
             {"role": "system", "content": self.preamble},
-            {"role": "system", "content": self.bio},
-        ] + [
-            {"role": "user", "content": item} for item in content
+            {"role": "user",   "content": self.bio},
         ]
+
+        if scraped_content:
+            gpt_messages.extend([
+                {"role": "user", "content": content} for content in scraped_content
+            ])
+
+        # if recent_posts:
+        #     gpt_messages.extend([
+        #         {"role": "user", "content": "Recent post #" + str(idx+1) + ": " + post}
+        #         for idx, post in enumerate(recent_posts)
+        #     ])
 
         gpt_res = self.chatgpt.ask(gpt_messages, self.gpt_token_limit)
 
@@ -57,7 +66,9 @@ class ContentManager:
 
         content         = self.fetch_website_content()
 
-        gpt_response    = self.process_gpt_response(content)
+        # Remove first pair-of double quotes if there are any in the beginning.
+        gpt_response    = sub(r'^"([^"]*)"', r'\1', self.process_gpt_response(content) )
+
         if not gpt_response:
             custom_print("Error: gpt response empty")
             return

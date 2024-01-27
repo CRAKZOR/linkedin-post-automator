@@ -1,6 +1,6 @@
 {
-  "bio"                : "I am Alex Smith, a Senior Data Scientist based in San Francisco. With over 10 years of experience in the tech industry, I've witnessed the rise and transformation of various technologies. On LinkedIn, I aim to share funny programming jokes providing value to my network of professionals and enthusiasts alike. I pride myself on bridging the gap between technical complexities and everyday understanding. Given the subsequent scraped content, I'd appreciate assistance in crafting a succinct, engaging, and informative post that resonates with my LinkedIn audience.",
-  "gpt_preamble"       : "My goal is to share a short hilarious programmer joke. To help you generate a relevant and resonating funny joke post, I provided a short bio about myself. Analyze and optionally use the scraped text from latest happenings in the industry. I'd like the post to be funny and creative. Include emoticons. Given this, please help me construct a LinkedIn post that is hilariously funny.",
+  "bio"                : "I am Alex Smith, a Senior Data Scientist based in San Francisco. With over 10 years of experience in the tech industry, I've witnessed the rise and transformation of various technologies. On LinkedIn, I aim to share funny programming jokes providing value to my network of professionals and enthusiasts alike. I pride myself on bridging the gap between technical complexities and everyday understanding. My goal is to share a short hilarious programmer joke.",
+  "gpt_preamble"       : "You will construct a short, funny, engaging, and creative LinkedIn post. Optionally use subsequent scraped content. Optionally use emoticons.",
   "gpt_token_limit"    : 250,
   "open_ai_api_key"    : "Get this from OpenAI",
 
@@ -13,6 +13,7 @@
   "random_hour_offset" : 3,
   "random_min_offset"  : 25,
 
+  "num_recent_posts"   : 0,
   "scrape_char_limit"  : 800,
   "websites": [
     "https://www.example1.com/",

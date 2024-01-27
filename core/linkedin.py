@@ -3,6 +3,7 @@ import json
 from os import path
 from utils import custom_print, get_content_type, get_file_data, MEDIA_CATEGORY
 from re import sub
+from urllib.parse import quote
 
 class ContentTooLong(requests.RequestException):
     """ LinkedIn post limit reached """
@@ -19,7 +20,7 @@ class LinkedIn:
 
     def __init__(self, cookies, config_fname='../config.json'):
         self.config_fname = config_fname
-        self.cookies     = { key: value.strip() if isinstance(value, str) else value for key, value in cookies.items() }
+        self.cookies      = { key: value.strip() if isinstance(value, str) else value for key, value in cookies.items() }
 
         if '\"' in cookies["JSESSIONID"]:
             self.cookies["JSESSIONID"] = sub( r'\"+', '', cookies["JSESSIONID"] )
@@ -36,6 +37,8 @@ class LinkedIn:
             "User-Agent"        : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             # ... other headers ...
         }
+
+        self.member_id = ''
 
     def update_cookies(self):
         # Update the cookies in the headers
@@ -95,6 +98,22 @@ class LinkedIn:
 
         except requests.exceptions.RequestException as e:
             custom_print(f"Error checking LinkedIn session: {e}")
+
+    # def get_recent_posts(self, count=1):
+    #     get_posts_endpoint = self.BASE_URL + "/voyager/api/graphql?variables=" \
+    #                                          "(count:" + str(count) + ",start:0,profileUrn:" + self.member_id + ")" \
+    #                                          "&queryId=voyagerFeedDashProfileUpdates.d50d324a655e6bbeff4e0490ffde19d1"
+    #
+    #     try:
+    #         response = requests.get(get_posts_endpoint, headers=self.headers)
+    #
+    #         response.raise_for_status()
+    #         # Handle response
+    #
+    #         self.check_session(response.headers)
+    #
+    #     except requests.exceptions.RequestException as e:
+    #         custom_print(f"Error retrieving recent LinkedIn posts: {e}")
 
     def post(self, text, media=None):
 

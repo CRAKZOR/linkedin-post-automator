@@ -14,7 +14,7 @@ class ChatGpt:
         self.openai = openai
         self.openai.api_key = api_key
 
-    def ask(self, messages, token_limit=150, model="gpt-3.5-turbo", temp=1, retry_limit=5, continuation_limit=3):
+    def ask(self, messages, token_limit=150, model="gpt-4", temp=1, retry_limit=5, continuation_limit=3):
         """
             Queries the GPT model for a response based on input messages. In case of incomplete
             responses, it attempts to continue the conversation until the specified continuation limit is reached.
