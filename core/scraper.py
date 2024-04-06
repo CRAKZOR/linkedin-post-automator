@@ -1,19 +1,29 @@
+import random
+
 import requests
 from bs4 import BeautifulSoup
 import re
+import feedparser
+from feedparser import FeedParserDict
 
 
 class Scraper:
     def __init__(self, url, character_limit=2000):
-        self.url = url
+        self.url: str = url
         self.character_limit = character_limit
 
     def fetch_content(self):
         try:
+            print(self.url)
+            if self.url.endswith('rss') or self.url.endswith('xml') or self.url.endswith('feed'):
+                print('RSS feed')
+                return self.rss_parse(self.url)
+
             response = requests.get(self.url)
             response.raise_for_status()
             return self.parse(response.text)
         except Exception as e:
+            print(f"Error fetching content from {self.url}: {e}")
             return None
 
     def parse(self, content):
@@ -35,6 +45,17 @@ class Scraper:
         lines = (line.strip() for line in all_text.splitlines())
 
         # Remove empty lines, and multi-space and join
-        all_text_clean = re.sub( r'\s+', ' ', ( ' '.join( line for line in lines if line ) ) )
+        all_text_clean = re.sub(r'\s+', ' ', (' '.join(line for line in lines if line)))
 
         return all_text_clean[0:self.character_limit]
+
+    def rss_parse(self, url):
+        feed: FeedParserDict = feedparser.parse(url)
+        print("Feed Entries:", len(feed.entries))
+        # for entry in feed.entries:
+        #     print("Entry Title:", entry.title)
+        #     print("Entry Link:", entry.link)
+        #     print("Entry Published Date:", entry.published)
+        #     print("Entry Summary:", entry.summary)
+        #     print("\n")
+        return feed.entries[random.randint(0, len(feed.entries) - 1)].summary
