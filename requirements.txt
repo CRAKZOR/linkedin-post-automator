@@ -1,5 +1,5 @@
+openai == 0.27.8
 beautifulsoup4
 requests
-openai
 schedule
 feedparser
