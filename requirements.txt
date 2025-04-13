@@ -2,3 +2,4 @@ openai == 1.73.0
 beautifulsoup4
 requests
 schedule
+feedparser
