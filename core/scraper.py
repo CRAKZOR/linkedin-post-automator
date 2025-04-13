@@ -14,14 +14,16 @@ class Scraper:
 
     def fetch_content(self):
         try:
-            print(self.url)
-            if self.url.endswith('rss') or self.url.endswith('xml') or self.url.endswith('feed'):
-                print('RSS feed')
-                return self.rss_parse(self.url)
+            # 1) Optimistically parse as feed
+            feed = feedparser.parse(self.url)
+            if not feed.bozo and feed.entries:
+                return self.rss_parse(feed)
 
-            response = requests.get(self.url)
-            response.raise_for_status()
-            return self.parse(response.text)
+            # 2) Fallback: treat as HTML page
+            resp = requests.get(self.url, timeout=10)
+            resp.raise_for_status()
+            return self.parse(resp.text)
+
         except Exception as e:
             print(f"Error fetching content from {self.url}: {e}")
             return None
@@ -49,13 +51,21 @@ class Scraper:
 
         return all_text_clean[0:self.character_limit]
 
-    def rss_parse(self, url):
-        feed: FeedParserDict = feedparser.parse(url)
-        print("Feed Entries:", len(feed.entries))
-        # for entry in feed.entries:
-        #     print("Entry Title:", entry.title)
-        #     print("Entry Link:", entry.link)
-        #     print("Entry Published Date:", entry.published)
-        #     print("Entry Summary:", entry.summary)
-        #     print("\n")
-        return feed.entries[random.randint(0, len(feed.entries) - 1)].summary
+    def rss_parse(self, feed: FeedParserDict) -> str | None:
+        if not feed.entries:
+            return None     # Empty feed
+
+        entry = random.choice(feed.entries)
+
+        # prefer summary, fall back to content or title
+        raw = (
+                getattr(entry, "summary", None)
+                or getattr(entry, "description", None)
+                or (entry.content[0].value if getattr(entry, "content", None) else None)
+                or entry.title
+        )
+        if raw is None:
+            return None
+
+        text = BeautifulSoup(raw, "html.parser").get_text(" ", strip=True)
+        return text[: self.character_limit]

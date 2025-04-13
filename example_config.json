@@ -14,7 +14,7 @@
   "random_min_offset"  : 25,
 
   "num_recent_posts"   : 0,
-  "scrape_char_limit"  : 800,
+  "scrape_char_limit"  : 4000,
   "websites": [
     "https://www.example1.com/",
     "https://www.example2.com/"
