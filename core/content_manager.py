@@ -2,6 +2,8 @@ from core.linkedin import LinkedIn
 from core.chatgpt import ChatGpt
 from core.scraper import Scraper
 
+from datetime import datetime
+
 import random
 from re import sub
 
@@ -39,6 +41,10 @@ class ContentManager:
 
     def process_gpt_response(self, scraped_content=None, recent_posts=None):
         # Combine preamble, bio, and website content into the correctly formatted messages
+
+        # Prepend the current date to preamble context
+        self.preamble = "The current datetime is {}.".format(datetime.now().strftime("%B %d, %Y (%A)")) + self.preamble
+
         gpt_messages = [
             {"role": "system", "content": self.preamble},
             {"role": "user",   "content": self.bio},

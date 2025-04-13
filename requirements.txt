@@ -1,4 +1,4 @@
-openai == 0.27.8
+openai == 1.73.0
 beautifulsoup4
 requests
 schedule
